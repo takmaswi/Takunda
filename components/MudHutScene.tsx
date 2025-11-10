@@ -46,12 +46,12 @@ function MudHut({ rotation }: { rotation: number }) {
         if (mesh.material) {
           if (Array.isArray(mesh.material)) {
             mesh.material.forEach((mat) => {
-              if (mat.isMeshStandardMaterial || mat.isMeshPhysicalMaterial) {
-                mat.envMapIntensity = 0.1; // Minimal to preserve textures
+              if ((mat as any).isMeshStandardMaterial || (mat as any).isMeshPhysicalMaterial) {
+                (mat as any).envMapIntensity = 0.1; // Minimal to preserve textures
                 mat.needsUpdate = true;
               }
             });
-          } else if (mesh.material.isMeshStandardMaterial || mesh.material.isMeshPhysicalMaterial) {
+          } else if ((mesh.material as any).isMeshStandardMaterial || (mesh.material as any).isMeshPhysicalMaterial) {
             (mesh.material as THREE.MeshStandardMaterial).envMapIntensity = 0.1; // Minimal to preserve textures
             mesh.material.needsUpdate = true;
           }

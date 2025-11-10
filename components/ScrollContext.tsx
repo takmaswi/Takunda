@@ -19,7 +19,7 @@ export function ScrollProvider({ children }: { children: ReactNode }) {
   const [currentSection, setCurrentSection] = useState(0);
 
   useEffect(() => {
-    let handleScroll: ((this: HTMLElement, ev: Event) => void) | null = null;
+    let handleScroll: ((ev?: Event) => void) | null = null;
     let handleWheel: ((this: Document, ev: WheelEvent) => void) | null = null;
     let container: HTMLElement | null = null;
 
@@ -35,7 +35,7 @@ export function ScrollProvider({ children }: { children: ReactNode }) {
       console.log('Scroll width:', container.scrollWidth, 'Client width:', container.clientWidth);
 
       // Track horizontal scroll manually
-      handleScroll = () => {
+      handleScroll = (_event?: Event) => {
         if (!container) return;
         const scrollLeft = container.scrollLeft;
         const scrollWidth = container.scrollWidth - container.clientWidth;
