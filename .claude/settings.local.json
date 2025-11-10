@@ -1,0 +1,36 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx create-next-app@latest . --typescript --tailwind --app --no-src-dir --import-alias \"@/*\" --eslint)",
+      "Bash(npm init:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run build:*)",
+      "Bash(tree:*)",
+      "Bash(npm run dev:*)",
+      "Bash(dir:*)",
+      "Bash(start http://localhost:3001)",
+      "mcp__ide__getDiagnostics",
+      "Bash(npx playwright install chromium)",
+      "Bash(node test-site.js:*)",
+      "Bash(README.txt)",
+      "Bash(node check-bounds.js:*)",
+      "Bash(timeout 15 node:*)",
+      "Bash(npx playwright:*)",
+      "Bash(timeout:*)",
+      "Bash(taskkill:*)",
+      "Bash(rd /s /q \".next\\dev\" 2)",
+      "Bash(nul)",
+      "Bash(ping:*)",
+      "Bash(tasklist:*)",
+      "Bash(findstr:*)",
+      "Bash(netstat:*)",
+      "Bash(cmd //c taskkill //PID 39780 //F)",
+      "Bash(git rev-parse:*)",
+      "Bash(git init:*)",
+      "Bash(git remote add:*)",
+      "Bash(git add:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
