@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useEffect, Suspense } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import {
   useGLTF,
   Environment,
@@ -11,6 +11,13 @@ import {
 } from '@react-three/drei';
 import * as THREE from 'three';
 import { useScroll } from '@/components/ScrollContext';
+import {
+  calculateSunPosition,
+  calculateSunColor,
+  calculateSunIntensity,
+  calculateFillLightIntensity,
+  calculateExposure
+} from '@/lib/lighting';
 
 // Mud Hut Model Component
 function MudHut({ rotation }: { rotation: number }) {
@@ -88,8 +95,47 @@ function MudHut({ rotation }: { rotation: number }) {
 // Preload the model
 useGLTF.preload('/models/mud_hut.glb');
 
-// Scene Lighting Component
-function SceneLighting() {
+// Dynamic Scene Lighting Component
+function DynamicSceneLighting({ scrollProgress }: { scrollProgress: number }) {
+  const sunLightRef = useRef<THREE.DirectionalLight>(null);
+  const fillLightRef = useRef<THREE.DirectionalLight>(null);
+  const sunMeshRef = useRef<THREE.Mesh>(null);
+  const { gl } = useThree();
+
+  useFrame(() => {
+    if (!sunLightRef.current || !fillLightRef.current) return;
+
+    // Calculate sun properties based on scroll progress
+    const sunPosition = calculateSunPosition(scrollProgress);
+    const sunColor = calculateSunColor(scrollProgress);
+    const sunIntensity = calculateSunIntensity(scrollProgress);
+    const fillIntensity = calculateFillLightIntensity(sunIntensity);
+    const exposure = calculateExposure(sunIntensity);
+
+    // Update sun light position
+    sunLightRef.current.position.copy(sunPosition);
+
+    // Update sun light color
+    sunLightRef.current.color.setHex(sunColor);
+
+    // Update sun light intensity
+    sunLightRef.current.intensity = sunIntensity;
+
+    // Update fill light intensity to compensate
+    fillLightRef.current.intensity = fillIntensity;
+
+    // Update visual sun mesh if it exists
+    if (sunMeshRef.current) {
+      sunMeshRef.current.position.copy(sunPosition);
+      const material = sunMeshRef.current.material as THREE.MeshStandardMaterial;
+      material.color.setHex(sunColor);
+      material.emissive.setHex(sunColor);
+    }
+
+    // Update renderer exposure for realistic day cycle
+    gl.toneMappingExposure = exposure;
+  });
+
   return (
     <>
       {/* HDRI Environment - Minimal intensity to preserve natural material colors */}
@@ -100,38 +146,42 @@ function SceneLighting() {
       />
 
       {/* Ambient light for base illumination */}
-      <ambientLight intensity={0.8} />
+      <ambientLight intensity={0.5} />
 
-      {/* Key light - main shadow-casting light - warm tone */}
+      {/* Dynamic Sun Light - main shadow-casting directional light */}
       <directionalLight
-        position={[5, 8, 5]}
-        intensity={0.5}
-        color="#FFF5E1"
+        ref={sunLightRef}
+        position={[20, 18, 8]} // Initial position (will be updated by useFrame)
+        intensity={1.8} // Initial intensity (will be updated by useFrame)
+        color={0xff8800} // Initial sunrise color (will be updated by useFrame)
         castShadow
         shadow-mapSize-width={2048}
         shadow-mapSize-height={2048}
-        shadow-camera-far={50}
-        shadow-camera-left={-10}
-        shadow-camera-right={10}
-        shadow-camera-top={10}
-        shadow-camera-bottom={-10}
+        shadow-camera-far={100}
+        shadow-camera-left={-15}
+        shadow-camera-right={15}
+        shadow-camera-top={15}
+        shadow-camera-bottom={-15}
       />
 
-      {/* Fill light from opposite side - warm and soft */}
+      {/* Fill light from opposite side - soft blue sky light */}
       <directionalLight
-        position={[-5, 5, -3]}
-        intensity={0.2}
-        color="#FFF8DC"
+        ref={fillLightRef}
+        position={[-15, 12, -5]}
+        intensity={0.8}
+        color="#87CEEB"
       />
 
-      {/* Accent light for warmth on the hut */}
-      <pointLight
-        position={[0, 3, 4]}
-        intensity={0.3}
-        color="#D4AF37"
-        distance={12}
-        decay={2}
-      />
+      {/* Visual Sun Sphere - optional glowing sphere in the sky */}
+      <mesh ref={sunMeshRef} position={[20, 18, 8]}>
+        <sphereGeometry args={[2, 32, 32]} />
+        <meshStandardMaterial
+          color={0xff8800}
+          emissive={0xff6600}
+          emissiveIntensity={1.5}
+          toneMapped={false}
+        />
+      </mesh>
     </>
   );
 }
@@ -197,7 +247,7 @@ export default function MudHutScene() {
 
         <Suspense fallback={<Loader />}>
           <MudHut rotation={rotation} />
-          <SceneLighting />
+          <DynamicSceneLighting scrollProgress={scrollProgress} />
 
           {/* Enhanced Contact Shadows for realistic ground shadow */}
           <ContactShadows
