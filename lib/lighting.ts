@@ -77,8 +77,9 @@ export const calculateSunColor = (progress: number): number => {
  */
 export const calculateSunIntensity = (progress: number): number => {
   // Peak at midday (50%), dim at edges
-  // Base intensity: 1.8, peak addition: 0.7 (max = 2.5 at noon)
-  return 1.8 + Math.sin(progress * Math.PI) * 0.7;
+  // Base intensity: 0.6, peak addition: 0.4 (max = 1.0 at noon)
+  // Reduced to prevent light bleeding into content areas
+  return 0.6 + Math.sin(progress * Math.PI) * 0.4;
 };
 
 /**
@@ -98,5 +99,6 @@ export const calculateFillLightIntensity = (sunIntensity: number): number => {
  * @returns Tone mapping exposure value
  */
 export const calculateExposure = (sunIntensity: number): number => {
-  return 0.8 + (sunIntensity - 1.0) * 0.4;
+  // Reduced exposure range (0.3-0.5) to prevent color bleeding and maintain text visibility
+  return 0.3 + (sunIntensity - 0.6) * 0.5;
 };
