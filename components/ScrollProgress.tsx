@@ -8,19 +8,10 @@ export default function ScrollProgress() {
   const sections = ['Foundation', 'Portfolio', 'Services', 'Contact'];
 
   return (
-    <div className="fixed right-8 top-1/2 -translate-y-1/2 z-20 hidden md:block">
-      <div className="flex flex-col space-y-4">
+    <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-20 hidden md:block">
+      <div className="flex flex-row space-x-6">
         {sections.map((section, index) => (
-          <div key={section} className="flex items-center space-x-3 group">
-            <span
-              className={`text-sm font-medium transition-all duration-300 ${
-                currentSection === index
-                  ? 'text-accent-gold opacity-100'
-                  : 'text-gray-500 opacity-0 group-hover:opacity-100'
-              }`}
-            >
-              {section}
-            </span>
+          <div key={section} className="flex flex-col items-center space-y-2 group">
             <div
               className={`w-3 h-3 rounded-full border-2 transition-all duration-300 ${
                 currentSection === index
@@ -28,12 +19,21 @@ export default function ScrollProgress() {
                   : 'border-gray-600 bg-transparent hover:border-accent-gold'
               }`}
             />
+            <span
+              className={`text-xs font-medium transition-all duration-300 ${
+                currentSection === index
+                  ? 'text-accent-gold opacity-100'
+                  : 'text-gray-500 opacity-0 group-hover:opacity-100'
+              }`}
+            >
+              {section}
+            </span>
           </div>
         ))}
       </div>
 
       {/* Connecting line */}
-      <div className="absolute right-[5px] top-0 h-full w-0.5 bg-white/10 -z-10" />
+      <div className="absolute bottom-[5px] left-0 w-full h-0.5 bg-white/10 -z-10" />
     </div>
   );
 }

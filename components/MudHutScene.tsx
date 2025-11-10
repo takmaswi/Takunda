@@ -179,14 +179,14 @@ export default function MudHutScene() {
         {/* Camera positioned at an angle to see the model */}
         <PerspectiveCamera
           makeDefault
-          position={[8, 6, 8]}
-          fov={50}
+          position={[8, 8, 8]}
+          fov={45}
           near={0.1}
           far={1000}
         />
 
         <OrbitControls
-          target={[0, 0, 0]}
+          target={[0, 1, 0]}
           enableZoom={true}
           enablePan={true}
           enableRotate={true}
