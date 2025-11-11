@@ -43,31 +43,48 @@ export function ScrollProvider({ children }: { children: ReactNode }) {
 
         setScrollProgress(progress);
 
-        // Determine current section based on progress with hysteresis
-        if (progress < 0.3) {
+        // Determine current section based on progress (now have 6 sections total)
+        // Hero(0), Foundation(0), Portfolio1(1), Portfolio2(2), Services(3), Contact(4)
+        if (progress < 0.2) {
           setCurrentSection(0);
-        } else if (progress < 0.5) {
+        } else if (progress < 0.4) {
           setCurrentSection(1);
-        } else if (progress < 0.7) {
+        } else if (progress < 0.55) {
           setCurrentSection(2);
-        } else {
+        } else if (progress < 0.7) {
           setCurrentSection(3);
+        } else {
+          setCurrentSection(4);
         }
       };
 
       // Convert vertical scroll (wheel) to horizontal scroll
       handleWheel = (e: WheelEvent) => {
         if (!container) return;
-        console.log('Wheel event detected:', e.deltaY);
 
-        // Prevent default vertical scrolling
+        // Check if the target is within a vertical scrollable area
+        const target = e.target as HTMLElement;
+        const scrollableParent = target.closest('.custom-scrollbar, .scroll-container');
+
+        if (scrollableParent) {
+          // Allow natural vertical scrolling within scrollable sections
+          const hasVerticalScroll = scrollableParent.scrollHeight > scrollableParent.clientHeight;
+          const atTop = scrollableParent.scrollTop === 0;
+          const atBottom = scrollableParent.scrollTop + scrollableParent.clientHeight >= scrollableParent.scrollHeight - 1;
+
+          // Only hijack scroll if at top and scrolling up, or at bottom and scrolling down
+          if ((e.deltaY < 0 && !atTop) || (e.deltaY > 0 && !atBottom)) {
+            // Let the vertical scroll happen naturally
+            return;
+          }
+        }
+
+        // Prevent default vertical scrolling and convert to horizontal
         e.preventDefault();
         e.stopPropagation();
 
         // Use deltaY (vertical scroll) to scroll horizontally
         container.scrollLeft += e.deltaY;
-
-        console.log('New scrollLeft:', container.scrollLeft);
       };
 
       // Listen to scroll events on the container

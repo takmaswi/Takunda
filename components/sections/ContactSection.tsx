@@ -4,12 +4,13 @@ import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { useScroll } from '@/components/ScrollContext';
 import Image from 'next/image';
+import { portfolioData } from '@/lib/portfolioData';
 
 const socialLinks = [
-  { name: 'GitHub', icon: '💻', url: '#' },
-  { name: 'LinkedIn', icon: '💼', url: '#' },
-  { name: 'Twitter', icon: '🐦', url: '#' },
-  { name: 'Email', icon: '📧', url: 'mailto:contact@takunda.com' },
+  { name: 'GitHub', icon: '💻', url: portfolioData.personal.github },
+  { name: 'LinkedIn', icon: '💼', url: portfolioData.personal.linkedin },
+  { name: 'Twitter', icon: '🐦', url: portfolioData.personal.twitter },
+  { name: 'Email', icon: '📧', url: `mailto:${portfolioData.personal.email}` },
 ];
 
 export default function ContactSection() {
@@ -26,7 +27,7 @@ export default function ContactSection() {
 
     const elements = sectionRef.current.querySelectorAll('.contact-animate');
 
-    if (currentSection === 3) {
+    if (currentSection === 4) {
       gsap.to(sectionRef.current, {
         opacity: 1,
         y: 0,
@@ -70,15 +71,16 @@ export default function ContactSection() {
   return (
     <div
       ref={sectionRef}
-      className="opacity-0 translate-y-10"
+      className="opacity-0 translate-y-10 w-full max-w-6xl"
     >
-      <div className="max-w-5xl">
-        <h2 className="section-title mb-12">Let's Connect</h2>
+      <div className="w-full h-[80vh] overflow-y-auto pr-2 custom-scrollbar">
+        <h2 className="text-3xl md:text-4xl font-bold text-center mb-2 text-gradient-gold">Let's Connect</h2>
+        <p className="text-center text-gray-400 text-sm mb-6">Get in touch to discuss your next project</p>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {/* Profile Card */}
-          <div className="contact-animate glass-card p-8 opacity-0 translate-y-10">
-            <div className="relative w-48 h-48 mx-auto mb-6 rounded-full overflow-hidden border-4 border-accent-gold/30 shadow-xl shadow-accent-gold/20">
+          <div className="contact-animate glass-card p-6 opacity-0 translate-y-10">
+            <div className="relative w-32 h-32 mx-auto mb-4 rounded-full overflow-hidden border-4 border-accent-gold/30 shadow-xl shadow-accent-gold/20">
               <Image
                 src="/images/image.jpg"
                 alt="Takunda"
@@ -88,46 +90,46 @@ export default function ContactSection() {
               />
             </div>
 
-            <div className="text-center mb-6">
-              <h3 className="text-3xl font-bold text-gradient-gold mb-2">
-                TAKUNDA
+            <div className="text-center mb-4">
+              <h3 className="text-2xl font-bold text-gradient-gold mb-1">
+                {portfolioData.personal.name}
               </h3>
-              <p className="text-gray-400">Full-Stack Developer & Designer</p>
+              <p className="text-sm text-gray-400">{portfolioData.personal.title}</p>
+              <p className="text-xs text-gray-500 mt-1">{portfolioData.personal.location}</p>
             </div>
 
-            <div className="h-px bg-gradient-to-r from-transparent via-accent-gold to-transparent mb-6" />
+            <div className="h-px bg-gradient-to-r from-transparent via-accent-gold to-transparent mb-4" />
 
-            <div className="space-y-4 mb-8">
-              <p className="text-gray-300 text-center leading-relaxed">
-                I'm always excited to collaborate on new projects and discuss
-                innovative ideas. Let's create something amazing together!
+            <div className="mb-4">
+              <p className="text-gray-300 text-center leading-relaxed text-sm">
+                {portfolioData.contact.bio}
               </p>
             </div>
 
             {/* Social Links */}
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-2">
               {socialLinks.map((link) => (
                 <a
                   key={link.name}
                   href={link.url}
-                  className="glass-card glass-card-hover p-4 flex items-center justify-center space-x-2 group"
+                  className="glass-card glass-card-hover p-3 flex items-center justify-center space-x-2 group"
                 >
-                  <span className="text-2xl transform group-hover:scale-110 transition-transform duration-300">
+                  <span className="text-xl transform group-hover:scale-110 transition-transform duration-300">
                     {link.icon}
                   </span>
-                  <span className="text-sm font-medium">{link.name}</span>
+                  <span className="text-xs font-medium">{link.name}</span>
                 </a>
               ))}
             </div>
           </div>
 
           {/* Contact Form */}
-          <div className="contact-animate glass-card p-8 opacity-0 translate-y-10">
-            <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="contact-animate glass-card p-6 opacity-0 translate-y-10">
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label
                   htmlFor="name"
-                  className="block text-sm font-medium mb-2 text-gray-300"
+                  className="block text-xs font-medium mb-1.5 text-gray-300"
                 >
                   Your Name
                 </label>
@@ -138,15 +140,15 @@ export default function ContactSection() {
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  className="input-glass w-full"
-                  placeholder="John Doe"
+                  className="input-glass w-full text-sm"
+                  placeholder={portfolioData.contact.formPlaceholders.name}
                 />
               </div>
 
               <div>
                 <label
                   htmlFor="email"
-                  className="block text-sm font-medium mb-2 text-gray-300"
+                  className="block text-xs font-medium mb-1.5 text-gray-300"
                 >
                   Email Address
                 </label>
@@ -157,15 +159,15 @@ export default function ContactSection() {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="input-glass w-full"
-                  placeholder="john@example.com"
+                  className="input-glass w-full text-sm"
+                  placeholder={portfolioData.contact.formPlaceholders.email}
                 />
               </div>
 
               <div>
                 <label
                   htmlFor="message"
-                  className="block text-sm font-medium mb-2 text-gray-300"
+                  className="block text-xs font-medium mb-1.5 text-gray-300"
                 >
                   Message
                 </label>
@@ -175,19 +177,19 @@ export default function ContactSection() {
                   value={formData.message}
                   onChange={handleChange}
                   required
-                  rows={5}
-                  className="input-glass w-full resize-none"
-                  placeholder="Tell me about your project..."
+                  rows={4}
+                  className="input-glass w-full resize-none text-sm"
+                  placeholder={portfolioData.contact.formPlaceholders.message}
                 />
               </div>
 
               <button
                 type="submit"
-                className="btn-primary w-full flex items-center justify-center group"
+                className="btn-primary w-full flex items-center justify-center group text-sm py-3"
               >
                 <span>Send Message</span>
                 <svg
-                  className="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform duration-300"
+                  className="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform duration-300"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -204,6 +206,23 @@ export default function ContactSection() {
           </div>
         </div>
       </div>
+
+      <style jsx>{`
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: rgba(255, 255, 255, 0.05);
+          border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: rgba(200, 121, 60, 0.5);
+          border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: rgba(200, 121, 60, 0.7);
+        }
+      `}</style>
     </div>
   );
 }

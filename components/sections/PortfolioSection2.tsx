@@ -5,7 +5,7 @@ import { gsap } from 'gsap';
 import { useScroll } from '@/components/ScrollContext';
 import { portfolioData } from '@/lib/portfolioData';
 
-export default function PortfolioSection() {
+export default function PortfolioSection2() {
   const [filter, setFilter] = useState<string>('All');
   const categories = ['All', 'Enterprise', '3D/WebGL', 'AI/ML', 'Mobile', 'SaaS', 'Education', 'Business'];
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -16,7 +16,7 @@ export default function PortfolioSection() {
 
     const cards = sectionRef.current.querySelectorAll('.project-card');
 
-    if (currentSection === 1) {
+    if (currentSection === 2) {
       gsap.to(sectionRef.current, {
         opacity: 1,
         y: 0,
@@ -45,8 +45,8 @@ export default function PortfolioSection() {
     ? portfolioData.projects
     : portfolioData.projects.filter(p => p.category === filter);
 
-  // Show only first 12 projects on this page
-  const filteredProjects = allProjects.slice(0, 12);
+  // Show remaining projects from index 12 onwards
+  const filteredProjects = allProjects.slice(12);
 
   return (
     <div
@@ -54,9 +54,9 @@ export default function PortfolioSection() {
       className="opacity-0 translate-y-10 w-full max-w-6xl"
     >
       <div className="w-full">
-        <h2 className="text-3xl md:text-4xl font-bold text-center mb-2 text-gradient-gold">Portfolio - Part 1</h2>
+        <h2 className="text-3xl md:text-4xl font-bold text-center mb-2 text-gradient-gold">Portfolio - Part 2</h2>
         <p className="text-center text-gray-400 text-xs mb-4">
-          Showcasing {filteredProjects.length} featured projects
+          More projects showcasing diverse expertise
         </p>
 
         {/* Filter Tabs */}
