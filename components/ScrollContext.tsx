@@ -1,15 +1,17 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 
 interface ScrollContextType {
   scrollProgress: number;
   currentSection: number;
+  scrollToSection: (index: number) => void;
 }
 
 const ScrollContext = createContext<ScrollContextType>({
   scrollProgress: 0,
   currentSection: 0,
+  scrollToSection: () => { },
 });
 
 export const useScroll = () => useContext(ScrollContext);
@@ -18,9 +20,20 @@ export function ScrollProvider({ children }: { children: ReactNode }) {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [currentSection, setCurrentSection] = useState(0);
 
+  const scrollToSection = useCallback((index: number) => {
+    const container = document.querySelector('#scroll-container') as HTMLElement;
+    if (container) {
+      const sectionWidth = container.clientWidth;
+      container.scrollTo({
+        left: index * sectionWidth,
+        behavior: 'smooth',
+      });
+    }
+  }, []);
+
   useEffect(() => {
     let handleScroll: ((ev?: Event) => void) | null = null;
-    let handleWheel: ((this: Document, ev: WheelEvent) => void) | null = null;
+    let handleKeyDown: ((ev: KeyboardEvent) => void) | null = null;
     let container: HTMLElement | null = null;
 
     // Wait a bit for the DOM to be fully ready
@@ -43,55 +56,63 @@ export function ScrollProvider({ children }: { children: ReactNode }) {
 
         setScrollProgress(progress);
 
-        // Determine current section based on progress (now have 6 sections total)
-        // Hero(0), Foundation(0), Portfolio1(1), Portfolio2(2), Services(3), Contact(4)
-        if (progress < 0.2) {
+        // Determine current section based on progress (now have 8 sections total)
+        // Hero(0), Foundation(1), Portfolio1(2), Portfolio2(3), Portfolio3(4), Services(5), Contact(6), Footer(7)
+        // Total scrollable width is divided into 7 segments (8 items)
+        // Segment size = 1/7 ≈ 0.1428
+        // Midpoints: 0.071, 0.214, 0.357, 0.500, 0.643, 0.786, 0.929
+        if (progress < 0.071) {
           setCurrentSection(0);
-        } else if (progress < 0.4) {
+        } else if (progress < 0.214) {
           setCurrentSection(1);
-        } else if (progress < 0.55) {
+        } else if (progress < 0.357) {
           setCurrentSection(2);
-        } else if (progress < 0.7) {
+        } else if (progress < 0.500) {
           setCurrentSection(3);
-        } else {
+        } else if (progress < 0.643) {
           setCurrentSection(4);
+        } else if (progress < 0.786) {
+          setCurrentSection(5);
+        } else if (progress < 0.929) {
+          setCurrentSection(6);
+        } else {
+          setCurrentSection(7);
         }
       };
 
-      // Convert vertical scroll (wheel) to horizontal scroll
-      handleWheel = (e: WheelEvent) => {
+      // Handle keyboard navigation
+      handleKeyDown = (e: KeyboardEvent) => {
         if (!container) return;
 
-        // Check if the target is within a vertical scrollable area
+        // Check if user is typing in an input/textarea
         const target = e.target as HTMLElement;
-        const scrollableParent = target.closest('.custom-scrollbar, .scroll-container');
-
-        if (scrollableParent) {
-          // Allow natural vertical scrolling within scrollable sections
-          const hasVerticalScroll = scrollableParent.scrollHeight > scrollableParent.clientHeight;
-          const atTop = scrollableParent.scrollTop === 0;
-          const atBottom = scrollableParent.scrollTop + scrollableParent.clientHeight >= scrollableParent.scrollHeight - 1;
-
-          // Only hijack scroll if at top and scrolling up, or at bottom and scrolling down
-          if ((e.deltaY < 0 && !atTop) || (e.deltaY > 0 && !atBottom)) {
-            // Let the vertical scroll happen naturally
-            return;
-          }
+        if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
+          return;
         }
 
-        // Prevent default vertical scrolling and convert to horizontal
-        e.preventDefault();
-        e.stopPropagation();
+        const scrollAmount = container.clientWidth; // Scroll by one full viewport width
 
-        // Use deltaY (vertical scroll) to scroll horizontally
-        container.scrollLeft += e.deltaY;
+        switch (e.key) {
+          case 'ArrowRight':
+          case 'ArrowDown':
+            // Scroll to next section
+            e.preventDefault();
+            container.scrollLeft += scrollAmount;
+            break;
+          case 'ArrowLeft':
+          case 'ArrowUp':
+            // Scroll to previous section
+            e.preventDefault();
+            container.scrollLeft -= scrollAmount;
+            break;
+        }
       };
 
       // Listen to scroll events on the container
       container.addEventListener('scroll', handleScroll);
 
-      // Listen to wheel events on the document to hijack vertical scrolling
-      document.addEventListener('wheel', handleWheel, { passive: false });
+      // Listen to keyboard events for arrow key navigation
+      document.addEventListener('keydown', handleKeyDown);
 
       // Initial call to set progress
       handleScroll();
@@ -102,14 +123,14 @@ export function ScrollProvider({ children }: { children: ReactNode }) {
       if (container && handleScroll) {
         container.removeEventListener('scroll', handleScroll);
       }
-      if (handleWheel) {
-        document.removeEventListener('wheel', handleWheel);
+      if (handleKeyDown) {
+        document.removeEventListener('keydown', handleKeyDown);
       }
     };
   }, []);
 
   return (
-    <ScrollContext.Provider value={{ scrollProgress, currentSection }}>
+    <ScrollContext.Provider value={{ scrollProgress, currentSection, scrollToSection }}>
       {children}
     </ScrollContext.Provider>
   );

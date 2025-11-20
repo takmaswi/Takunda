@@ -1,13 +1,15 @@
 'use client';
 
-import { useRef, useEffect, Suspense } from 'react';
+import { useRef, useEffect, Suspense, useMemo } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import {
   useGLTF,
   Environment,
   PerspectiveCamera,
   ContactShadows,
-  OrbitControls
+  OrbitControls,
+  useTexture,
+  Billboard
 } from '@react-three/drei';
 import * as THREE from 'three';
 import { useScroll } from '@/components/ScrollContext';
@@ -46,21 +48,16 @@ function MudHut({ rotation }: { rotation: number }) {
 
         // Preserve natural material colors and optimize for directional lighting
         if (mesh.material) {
-          if (Array.isArray(mesh.material)) {
-            mesh.material.forEach((mat) => {
-              if ((mat as any).isMeshStandardMaterial || (mat as any).isMeshPhysicalMaterial) {
-                (mat as any).envMapIntensity = 0.15;
-                (mat as any).metalness = 0.0; // Not metallic - mud is matte
-                (mat as any).roughness = 0.8; // Rough surface catches directional light well
-                mat.needsUpdate = true;
-              }
-            });
-          } else if ((mesh.material as any).isMeshStandardMaterial || (mesh.material as any).isMeshPhysicalMaterial) {
-            (mesh.material as THREE.MeshStandardMaterial).envMapIntensity = 0.15;
-            (mesh.material as THREE.MeshStandardMaterial).metalness = 0.0;
-            (mesh.material as THREE.MeshStandardMaterial).roughness = 0.8;
-            mesh.material.needsUpdate = true;
-          }
+          const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+
+          materials.forEach((mat) => {
+            if (mat instanceof THREE.MeshStandardMaterial || mat instanceof THREE.MeshPhysicalMaterial) {
+              mat.envMapIntensity = 0.15;
+              mat.metalness = 0.0; // Not metallic - mud is matte
+              mat.roughness = 0.6; // Rough surface catches directional light well
+              mat.needsUpdate = true;
+            }
+          });
         }
       }
     });
@@ -84,15 +81,12 @@ function MudHut({ rotation }: { rotation: number }) {
   });
 
   return (
-    <group ref={groupRef} position={[0, 0, 0]}>
+    <group ref={groupRef} position={[0, -3.5, 0]}> {/* Extremely lowered hut */}
       {/* Scale the model - original size is ~42 units tall */}
       <primitive object={scene} scale={0.2} />
     </group>
   );
 }
-
-// Preload the model
-useGLTF.preload('/models/mud_hut.glb');
 
 // Directional Golden Sunlight Component
 function GoldenSunlight() {
@@ -116,6 +110,142 @@ function GoldenSunlight() {
         shadow-camera-bottom={-15}
       />
     </>
+  );
+}
+
+// Fire Shader Code
+const fireVertexShader = `
+varying vec2 vUv;
+void main() {
+  vUv = uv;
+  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+}
+`;
+
+const fireFragmentShader = `
+varying vec2 vUv;
+uniform float uTime;
+uniform vec3 uColor;
+
+// Simplex 2D noise
+vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
+
+float snoise(vec2 v){
+  const vec4 C = vec4(0.211324865405187, 0.366025403784439,
+           -0.577350269189626, 0.024390243902439);
+  vec2 i  = floor(v + dot(v, C.yy) );
+  vec2 x0 = v -   i + dot(i, C.xx);
+  vec2 i1;
+  i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+  vec4 x12 = x0.xyxy + C.xxzz;
+  x12.xy -= i1;
+  i = mod(i, 289.0);
+  vec3 p = permute( permute( i.y + vec3(0.0, i1.y, 1.0 ))
+  + i.x + vec3(0.0, i1.x, 1.0 ));
+  vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy), dot(x12.zw,x12.zw)), 0.0);
+  m = m*m ;
+  m = m*m ;
+  vec3 x = 2.0 * fract(p * C.www) - 1.0;
+  vec3 h = abs(x) - 0.5;
+  vec3 ox = floor(x + 0.5);
+  vec3 a0 = x - ox;
+  m *= 1.79284291400159 - 0.85373472095314 * ( a0*a0 + h*h );
+  vec3 g;
+  g.x  = a0.x  * x0.x  + h.x  * x0.y;
+  g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+  return 130.0 * dot(m, g);
+}
+
+void main() {
+  vec2 uv = vUv;
+  
+  // Adjust UVs for movement
+  float time = uTime * 1.5;
+  
+  // Create base noise layers
+  float n1 = snoise(vec2(uv.x * 5.0, uv.y * 2.0 - time));
+  float n2 = snoise(vec2(uv.x * 10.0, uv.y * 4.0 - time * 2.0));
+  
+  // Combine noise
+  float noise = n1 * 0.5 + n2 * 0.25;
+  
+  // Shape the fire (taper at top, round at bottom)
+  float bottom = smoothstep(0.0, 0.2, uv.y);
+  float top = 1.0 - smoothstep(0.4, 1.0, uv.y); // Fade out earlier
+  float sides = smoothstep(0.0, 0.4, uv.x) * smoothstep(1.0, 0.6, uv.x);
+  
+  // Main flame shape
+  float flame = (noise + 0.5) * sides * top * bottom;
+  
+  // Color ramp
+  vec3 color1 = vec3(1.0, 0.1, 0.0); // Red
+  vec3 color2 = vec3(1.0, 0.6, 0.0); // Orange
+  vec3 color3 = vec3(1.0, 0.9, 0.1); // Yellow
+  
+  vec3 finalColor = mix(color1, color2, flame * 2.0);
+  finalColor = mix(finalColor, color3, smoothstep(0.4, 0.8, flame));
+  
+  // Alpha mask
+  float alpha = smoothstep(0.2, 0.4, flame);
+  
+  gl_FragColor = vec4(finalColor, alpha * 0.9);
+}
+`;
+
+function FireEffect({
+  position,
+  lightIntensity = 3.0
+}: {
+  position: [number, number, number];
+  lightIntensity?: number;
+  color?: string; // Kept for compatibility
+  texturePath?: string; // Kept for compatibility
+  particleCount?: number; // Kept for compatibility
+}) {
+  const materialRef = useRef<THREE.ShaderMaterial>(null);
+  const lightRef = useRef<THREE.PointLight>(null);
+
+  useFrame((state) => {
+    if (materialRef.current) {
+      materialRef.current.uniforms.uTime.value = state.clock.elapsedTime;
+    }
+    // Flicker light
+    if (lightRef.current) {
+      const flicker = Math.sin(state.clock.elapsedTime * 10) * 0.3 +
+        Math.cos(state.clock.elapsedTime * 23) * 0.2;
+      lightRef.current.intensity = lightIntensity + flicker;
+    }
+  });
+
+  const uniforms = useMemo(() => ({
+    uTime: { value: 0 },
+    uColor: { value: new THREE.Color('#FF4500') }
+  }), []);
+
+  return (
+    <group position={position}>
+      <Billboard follow={true} lockX={false} lockY={false} lockZ={false}>
+        <mesh position={[0, 0.8, 0]}> {/* Lifted slightly so base is at 0 */}
+          <planeGeometry args={[1.2, 2.0]} /> {/* Smaller, taller aspect ratio */}
+          <shaderMaterial
+            ref={materialRef}
+            vertexShader={fireVertexShader}
+            fragmentShader={fireFragmentShader}
+            uniforms={uniforms}
+            transparent={true}
+            blending={THREE.AdditiveBlending}
+            depthWrite={false}
+          />
+        </mesh>
+      </Billboard>
+      <pointLight
+        ref={lightRef}
+        color="#FF5500"
+        intensity={lightIntensity}
+        distance={10}
+        decay={2}
+      />
+    </group>
   );
 }
 
@@ -184,10 +314,10 @@ export default function MudHutScene() {
         dpr={[1, 2]}
         performance={{ min: 0.5 }}
       >
-        {/* Camera positioned at an angle to see the model */}
+        {/* Camera positioned FRONTALLY for symmetry */}
         <PerspectiveCamera
           makeDefault
-          position={[8, 8, 8]}
+          position={[0, 1, 11]}
           fov={45}
           near={0.1}
           far={1000}
@@ -195,9 +325,9 @@ export default function MudHutScene() {
 
         <OrbitControls
           target={[0, 1, 0]}
-          enableZoom={true}
-          enablePan={true}
-          enableRotate={true}
+          enableZoom={false}
+          enablePan={false}
+          enableRotate={false} // Lock rotation to preserve the curated view
         />
 
         {/* Dark background matching theme */}
@@ -206,6 +336,18 @@ export default function MudHutScene() {
         <Suspense fallback={<Loader />}>
           <MudHut rotation={rotation} />
           <GoldenSunlight />
+
+          {/* Realistic Fire - Left Flank (Symmetrical & Visible) */}
+          <FireEffect
+            position={[-3.5, -3.5, 0]} // Brought in for safety
+            lightIntensity={6.0}
+          />
+
+          {/* Realistic Fire - Right Flank (Symmetrical & Visible) */}
+          <FireEffect
+            position={[3.5, -3.5, 0]} // Brought in for safety
+            lightIntensity={6.0}
+          />
 
           {/* Enhanced Contact Shadows for realistic ground shadow */}
           <ContactShadows
@@ -225,5 +367,3 @@ export default function MudHutScene() {
     </div>
   );
 }
-
-// Note: Model is loaded on-demand via useLoader

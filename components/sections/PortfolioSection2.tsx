@@ -7,7 +7,7 @@ import { portfolioData } from '@/lib/portfolioData';
 
 export default function PortfolioSection2() {
   const [filter, setFilter] = useState<string>('All');
-  const categories = ['All', 'Enterprise', '3D/WebGL', 'AI/ML', 'Mobile', 'SaaS', 'Education', 'Business'];
+  const categories = ['All', 'AI/ML', 'Data Visualization', 'Analytics', 'Automation', 'Developer Tool', 'Utility'];
   const sectionRef = useRef<HTMLDivElement>(null);
   const { currentSection } = useScroll();
 
@@ -16,7 +16,7 @@ export default function PortfolioSection2() {
 
     const cards = sectionRef.current.querySelectorAll('.project-card');
 
-    if (currentSection === 2) {
+    if (currentSection === 3) {
       gsap.to(sectionRef.current, {
         opacity: 1,
         y: 0,
@@ -31,45 +31,46 @@ export default function PortfolioSection2() {
         duration: 0.6,
         ease: 'power3.out',
       });
-    } else {
-      gsap.to(sectionRef.current, {
-        opacity: 0,
-        y: 50,
-        duration: 0.5,
-        ease: 'power2.in',
-      });
     }
   }, [currentSection, filter]);
 
-  const allProjects = filter === 'All'
-    ? portfolioData.projects
-    : portfolioData.projects.filter(p => p.category === filter);
+  // Get projects 9-18 (AI, Data & Tech Group)
+  const pageProjects = portfolioData.projects.slice(9, 18);
 
-  // Show remaining projects from index 12 onwards
-  const filteredProjects = allProjects.slice(12);
+  // Filter only within this page's projects
+  const filteredProjects = filter === 'All'
+    ? pageProjects
+    : pageProjects.filter(p => p.category === filter);
 
   return (
     <div
       ref={sectionRef}
-      className="opacity-0 translate-y-10 w-full max-w-6xl"
+      className="opacity-0 translate-y-10 w-full max-w-[95vw]"
     >
-      <div className="w-full">
-        <h2 className="text-3xl md:text-4xl font-bold text-center mb-2 text-gradient-gold">Portfolio - Part 2</h2>
-        <p className="text-center text-gray-400 text-xs mb-4">
+      <div className="w-full flex flex-col items-center">
+
+        {/* Vertical Line Decoration */}
+        <div className="w-px h-16 bg-gradient-to-b from-transparent to-accent-cyan/50 mb-6 flex-shrink-0"></div>
+
+        <h2 className="text-3xl md:text-4xl font-cinzel font-bold text-center mb-4 text-white tracking-widest drop-shadow-md">
+          PORTFOLIO II
+        </h2>
+        <div className="w-12 h-px bg-accent-cyan mx-auto mb-8"></div>
+
+        <p className="text-center text-gray-300 text-xs mb-8 font-inter tracking-wide">
           More projects showcasing diverse expertise
         </p>
 
         {/* Filter Tabs */}
-        <div className="flex flex-wrap justify-center gap-2 mb-6">
+        <div className="flex flex-wrap justify-center gap-2 mb-8">
           {categories.map((category) => (
             <button
               key={category}
               onClick={() => setFilter(category)}
-              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-300 ${
-                filter === category
-                  ? 'bg-accent-gold text-dark-bg'
-                  : 'bg-white/5 border border-white/10 hover:bg-white/10 text-gray-300'
-              }`}
+              className={`px-4 py-1.5 rounded-sm text-xs font-medium transition-all duration-300 font-inter tracking-wide border ${filter === category
+                ? 'bg-accent-cyan/20 border-accent-cyan text-white'
+                : 'bg-black/40 border-white/10 hover:border-accent-cyan/50 text-gray-400 hover:text-white'
+                }`}
             >
               {category}
             </button>
@@ -78,25 +79,25 @@ export default function PortfolioSection2() {
 
         {/* Projects Grid - No scrolling */}
         <div className="w-full">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
             {filteredProjects.map((project, index) => (
               <div
                 key={index}
-                className="project-card glass-card glass-card-hover p-4 opacity-0 translate-y-10 group"
+                className="project-card glass-card glass-card-hover p-5 opacity-0 translate-y-10 group border border-white/5 hover:border-accent-cyan/30 transition-all duration-500"
               >
-                <div className={`h-1.5 w-12 rounded-full bg-gradient-to-r ${project.color} mb-3`} />
+                <div className={`h-1 w-full bg-gradient-to-r ${project.color} mb-4 opacity-70 group-hover:opacity-100 transition-opacity duration-300`} />
 
-                <div className="mb-2">
-                  <span className="text-xs px-2 py-0.5 bg-accent-gold/10 text-accent-gold rounded">
+                <div className="mb-3">
+                  <span className="text-[10px] uppercase tracking-widest px-2 py-1 bg-accent-cyan/10 text-accent-cyan rounded-sm font-inter">
                     {project.category}
                   </span>
                 </div>
 
-                <h3 className="text-base font-bold mb-2 group-hover:text-accent-gold transition-colors duration-300">
+                <h3 className="text-base font-cinzel font-bold mb-2 text-white group-hover:text-accent-cyan transition-colors duration-300">
                   {project.title}
                 </h3>
 
-                <p className="text-gray-400 mb-3 leading-relaxed text-xs">
+                <p className="text-gray-400 mb-4 leading-relaxed text-xs font-light font-inter">
                   {project.description}
                 </p>
 
@@ -104,13 +105,13 @@ export default function PortfolioSection2() {
                   {project.tech.slice(0, 3).map((tech) => (
                     <span
                       key={tech}
-                      className="px-2 py-0.5 bg-white/5 border border-white/10 rounded-full text-xs"
+                      className="px-2 py-1 bg-white/5 border border-white/10 rounded-sm text-[10px] text-gray-300 font-inter tracking-wide"
                     >
                       {tech}
                     </span>
                   ))}
                   {project.tech.length > 3 && (
-                    <span className="px-2 py-0.5 bg-white/5 border border-white/10 rounded-full text-xs">
+                    <span className="px-2 py-1 bg-white/5 border border-white/10 rounded-sm text-[10px] text-gray-300 font-inter tracking-wide">
                       +{project.tech.length - 3}
                     </span>
                   )}

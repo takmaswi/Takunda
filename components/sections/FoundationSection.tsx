@@ -13,19 +13,12 @@ export default function FoundationSection() {
   useEffect(() => {
     if (!sectionRef.current) return;
 
-    if (currentSection === 0) {
+    if (currentSection === 1) {
       gsap.to(sectionRef.current, {
         opacity: 1,
         y: 0,
         duration: 0.8,
         ease: 'power3.out',
-      });
-    } else {
-      gsap.to(sectionRef.current, {
-        opacity: 0,
-        y: 50,
-        duration: 0.5,
-        ease: 'power2.in',
       });
     }
   }, [currentSection]);
@@ -35,44 +28,55 @@ export default function FoundationSection() {
       ref={sectionRef}
       className="opacity-0 translate-y-10 w-full max-w-6xl"
     >
-      {/* Main scrollable container */}
-      <div className="h-[80vh] overflow-y-auto pr-2 custom-scrollbar">
-        {/* Introduction Card */}
-        <div className="glass-card p-6 md:p-8 mb-4">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-2 text-gradient-gold">Foundation</h2>
-          <p className="text-sm text-gray-400 text-center mb-1">{portfolioData.personal.title}</p>
-          <p className="text-xs text-accent-cyan text-center mb-6">IT Consultant with {portfolioData.experience.years}+ years of professional experience</p>
+      {/* Main container */}
+      <div className="w-full flex flex-col items-center">
 
-          <div className="space-y-4">
-            <p className="text-lg md:text-xl text-gray-300 leading-relaxed text-center">
+        {/* Vertical Line Decoration */}
+        <div className="w-px h-16 bg-gradient-to-b from-transparent to-accent-cyan/50 mb-6 flex-shrink-0"></div>
+
+        {/* Introduction Card */}
+        <div className="glass-card p-8 md:p-10 mb-4 w-full relative overflow-hidden group">
+          {/* Subtle shine effect */}
+          <div className="absolute inset-0 bg-gradient-to-tr from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
+
+          <h2 className="text-4xl md:text-5xl font-cinzel font-bold text-center mb-4 text-white tracking-widest drop-shadow-md">
+            FOUNDATION
+          </h2>
+          <div className="w-12 h-px bg-accent-cyan mx-auto mb-6"></div>
+
+          <p className="text-sm font-inter text-accent-cyan text-center mb-1 uppercase tracking-widest">{portfolioData.personal.title}</p>
+          <p className="text-xs text-gray-400 text-center mb-8">IT Consultant with {portfolioData.experience.years}+ years of professional experience</p>
+
+          <div className="space-y-6 flex flex-col items-center">
+            <p className="text-lg md:text-xl text-gray-200 leading-relaxed text-center font-light">
               {portfolioData.introduction.tagline.split('blend')[0]}blend{' '}
-              <span className="text-accent-gold font-semibold">creativity</span>{' '}
+              <span className="text-white font-semibold border-b border-accent-cyan/30">creativity</span>{' '}
               with{' '}
               <span className="text-accent-cyan font-semibold">technology</span>.
             </p>
 
-            <div className="h-px bg-gradient-to-r from-transparent via-accent-gold to-transparent" />
+            <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
 
-            <p className="text-base text-gray-400 leading-relaxed">
+            <p className="text-base text-gray-300 leading-relaxed text-center max-w-3xl mx-auto">
               {portfolioData.introduction.mainParagraph}
             </p>
 
-            <div className="grid grid-cols-2 gap-3 mt-6">
-              <div className="glass-card p-4 text-center hover:bg-white/5 transition-colors duration-300">
-                <div className="text-2xl md:text-3xl font-bold text-gradient-gold">{portfolioData.experience.years}+</div>
-                <div className="text-xs md:text-sm text-gray-400 mt-1">Years Experience</div>
+            <div className="grid grid-cols-2 gap-4 mt-8">
+              <div className="p-4 text-center border border-white/5 rounded-lg bg-white/5 hover:bg-white/10 transition-colors duration-300">
+                <div className="text-3xl md:text-4xl font-cinzel font-bold text-white">{portfolioData.experience.years}+</div>
+                <div className="text-xs md:text-sm text-accent-cyan mt-1 uppercase tracking-wider">Years Experience</div>
               </div>
-              <div className="glass-card p-4 text-center hover:bg-white/5 transition-colors duration-300">
-                <div className="text-2xl md:text-3xl font-bold text-gradient-cyan">{portfolioData.experience.projectsCompleted}</div>
-                <div className="text-xs md:text-sm text-gray-400 mt-1">Projects</div>
+              <div className="p-4 text-center border border-white/5 rounded-lg bg-white/5 hover:bg-white/10 transition-colors duration-300">
+                <div className="text-3xl md:text-4xl font-cinzel font-bold text-white">{portfolioData.experience.projectsCompleted}</div>
+                <div className="text-xs md:text-sm text-accent-cyan mt-1 uppercase tracking-wider">Projects</div>
               </div>
             </div>
 
-            <div className="flex flex-wrap gap-2 mt-4">
+            <div className="flex flex-wrap justify-center gap-2 mt-6">
               {portfolioData.techStack.map((skill) => (
                 <span
                   key={skill}
-                  className="px-3 py-1.5 bg-white/5 border border-accent-gold/30 rounded-full text-xs md:text-sm hover:bg-accent-gold/10 hover:border-accent-gold/50 transition-all duration-300"
+                  className="px-4 py-2 bg-black/40 border border-white/10 rounded-sm text-xs md:text-sm text-gray-300 hover:border-accent-cyan/50 hover:text-white transition-all duration-300 font-inter tracking-wide"
                 >
                   {skill}
                 </span>
@@ -85,22 +89,7 @@ export default function FoundationSection() {
         <SkillsTimeline />
       </div>
 
-      <style jsx>{`
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 6px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: rgba(255, 255, 255, 0.05);
-          border-radius: 10px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: rgba(200, 121, 60, 0.5);
-          border-radius: 10px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: rgba(200, 121, 60, 0.7);
-        }
-      `}</style>
+
     </div>
   );
 }

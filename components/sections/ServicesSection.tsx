@@ -14,7 +14,7 @@ export default function ServicesSection() {
 
     const cards = sectionRef.current.querySelectorAll('.service-card');
 
-    if (currentSection === 3) {
+    if (currentSection === 5) {
       gsap.to(sectionRef.current, {
         opacity: 1,
         y: 0,
@@ -29,13 +29,6 @@ export default function ServicesSection() {
         duration: 0.6,
         ease: 'power3.out',
       });
-    } else {
-      gsap.to(sectionRef.current, {
-        opacity: 0,
-        y: 50,
-        duration: 0.5,
-        ease: 'power2.in',
-      });
     }
   }, [currentSection]);
 
@@ -44,47 +37,46 @@ export default function ServicesSection() {
       ref={sectionRef}
       className="opacity-0 translate-y-10 w-full max-w-6xl"
     >
-      <div className="w-full h-[80vh] overflow-y-auto pr-2 custom-scrollbar">
-        <h2 className="text-3xl md:text-4xl font-bold text-center mb-2 text-gradient-gold">Services</h2>
-        <p className="text-center text-gray-400 text-sm mb-6">Comprehensive solutions tailored to your needs</p>
+      <div className="w-full flex flex-col items-center">
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {/* Vertical Line Decoration */}
+        <div className="w-px h-16 bg-gradient-to-b from-transparent to-accent-cyan/50 mb-6 flex-shrink-0"></div>
+
+        <h2 className="text-4xl md:text-5xl font-cinzel font-bold text-center mb-4 text-white tracking-widest drop-shadow-md">
+          SERVICES
+        </h2>
+        <div className="w-12 h-px bg-accent-cyan mx-auto mb-8"></div>
+
+        <p className="text-center text-gray-300 text-sm mb-10 font-inter tracking-wide max-w-2xl">
+          Comprehensive solutions tailored to your digital needs
+        </p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
           {portfolioData.services.map((service, index) => (
             <div
               key={index}
-              className={`service-card glass-card glass-card-hover p-5 opacity-0 translate-y-10 group ${
-                index === 4 ? 'md:col-span-2 lg:col-span-1' : ''
-              }`}
+              className={`service-card glass-card glass-card-hover p-8 opacity-0 translate-y-10 group border border-white/5 hover:border-accent-cyan/30 transition-all duration-500 ${index === 4 ? 'md:col-span-2 lg:col-span-1' : ''
+                }`}
             >
-              <div className="text-4xl mb-3 transform group-hover:scale-110 transition-transform duration-300">
+              <div className="text-4xl mb-4 transform group-hover:scale-110 transition-transform duration-500 text-accent-cyan">
                 {service.icon}
               </div>
 
-              <h3 className="text-lg font-bold mb-2 group-hover:text-gradient-gold transition-all duration-300">
+              <h3 className="text-lg font-cinzel font-bold mb-3 text-white group-hover:text-accent-cyan transition-colors duration-300 tracking-wide">
                 {service.title}
               </h3>
 
-              <p className="text-gray-400 mb-4 leading-relaxed text-sm">
+              <p className="text-gray-400 mb-6 leading-relaxed text-sm font-light">
                 {service.description}
               </p>
 
-              <ul className="space-y-1.5">
+              <ul className="space-y-2">
                 {service.features.map((feature, featureIndex) => (
                   <li
                     key={featureIndex}
-                    className="flex items-center text-xs text-gray-300"
+                    className="flex items-center text-xs text-gray-300 font-inter tracking-wide"
                   >
-                    <svg
-                      className="w-3 h-3 mr-2 text-accent-gold flex-shrink-0"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
+                    <div className="w-1 h-1 bg-accent-cyan rounded-full mr-2 flex-shrink-0"></div>
                     {feature}
                   </li>
                 ))}
@@ -94,22 +86,7 @@ export default function ServicesSection() {
         </div>
       </div>
 
-      <style jsx>{`
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 6px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: rgba(255, 255, 255, 0.05);
-          border-radius: 10px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: rgba(200, 121, 60, 0.5);
-          border-radius: 10px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: rgba(200, 121, 60, 0.7);
-        }
-      `}</style>
+
     </div>
   );
 }

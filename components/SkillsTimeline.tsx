@@ -6,14 +6,14 @@ export default function SkillsTimeline() {
   return (
     <div className="space-y-4">
       {/* Skills Section */}
-      <div className="glass-card p-5">
-        <h3 className="text-xl md:text-2xl font-bold text-gradient-gold mb-4">Technical Skills</h3>
+      <div className="glass-card p-8 md:p-10">
+        <h3 className="text-xl md:text-2xl font-bold text-gradient-gold mb-4 text-center">Technical Skills</h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Languages */}
           <div>
-            <h4 className="text-sm font-semibold text-accent-cyan mb-2">Languages</h4>
-            <div className="flex flex-wrap gap-1.5">
+            <h4 className="text-sm font-semibold text-accent-cyan mb-2 text-center">Languages</h4>
+            <div className="flex flex-wrap gap-1.5 justify-center">
               {portfolioData.skills.languages.map((skill) => (
                 <span
                   key={skill}
@@ -27,8 +27,8 @@ export default function SkillsTimeline() {
 
           {/* Frontend */}
           <div>
-            <h4 className="text-sm font-semibold text-accent-cyan mb-2">Frontend</h4>
-            <div className="flex flex-wrap gap-1.5">
+            <h4 className="text-sm font-semibold text-accent-cyan mb-2 text-center">Frontend</h4>
+            <div className="flex flex-wrap gap-1.5 justify-center">
               {portfolioData.skills.frontend.map((skill) => (
                 <span
                   key={skill}
@@ -42,8 +42,8 @@ export default function SkillsTimeline() {
 
           {/* Backend */}
           <div>
-            <h4 className="text-sm font-semibold text-accent-cyan mb-2">Backend</h4>
-            <div className="flex flex-wrap gap-1.5">
+            <h4 className="text-sm font-semibold text-accent-cyan mb-2 text-center">Backend</h4>
+            <div className="flex flex-wrap gap-1.5 justify-center">
               {portfolioData.skills.backend.map((skill) => (
                 <span
                   key={skill}
@@ -57,8 +57,8 @@ export default function SkillsTimeline() {
 
           {/* Tools */}
           <div>
-            <h4 className="text-sm font-semibold text-accent-cyan mb-2">Tools & Technologies</h4>
-            <div className="flex flex-wrap gap-1.5">
+            <h4 className="text-sm font-semibold text-accent-cyan mb-2 text-center">Tools & Technologies</h4>
+            <div className="flex flex-wrap gap-1.5 justify-center">
               {portfolioData.skills.tools.map((skill) => (
                 <span
                   key={skill}
@@ -73,8 +73,8 @@ export default function SkillsTimeline() {
 
         {/* Specialties */}
         <div className="mt-4 pt-4 border-t border-white/10">
-          <h4 className="text-sm font-semibold text-accent-gold mb-2">Specialties</h4>
-          <div className="flex flex-wrap gap-2">
+          <h4 className="text-sm font-semibold text-accent-gold mb-2 text-center">Specialties</h4>
+          <div className="flex flex-wrap gap-2 justify-center">
             {portfolioData.skills.specialties.map((specialty) => (
               <span
                 key={specialty}
