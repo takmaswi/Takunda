@@ -46,13 +46,28 @@ export function ScrollProvider({ children }: { children: ReactNode }) {
 
       console.log('Container found:', container);
       console.log('Scroll width:', container.scrollWidth, 'Client width:', container.clientWidth);
+      console.log('Scroll height:', container.scrollHeight, 'Client height:', container.clientHeight);
 
-      // Track horizontal scroll manually
+      // Track scroll manually (supports both horizontal and vertical)
       handleScroll = (_event?: Event) => {
         if (!container) return;
-        const scrollLeft = container.scrollLeft;
-        const scrollWidth = container.scrollWidth - container.clientWidth;
-        const progress = scrollWidth > 0 ? scrollLeft / scrollWidth : 0;
+
+        // Determine if we are in horizontal or vertical mode
+        // We can check which dimension has scrollable content
+        const isHorizontal = container.scrollWidth > container.clientWidth + 10;
+
+        let progress = 0;
+
+        if (isHorizontal) {
+          const scrollLeft = container.scrollLeft;
+          const scrollWidth = container.scrollWidth - container.clientWidth;
+          progress = scrollWidth > 0 ? scrollLeft / scrollWidth : 0;
+        } else {
+          // Vertical mode (Mobile)
+          const scrollTop = container.scrollTop;
+          const scrollHeight = container.scrollHeight - container.clientHeight;
+          progress = scrollHeight > 0 ? scrollTop / scrollHeight : 0;
+        }
 
         setScrollProgress(progress);
 
@@ -90,20 +105,29 @@ export function ScrollProvider({ children }: { children: ReactNode }) {
           return;
         }
 
-        const scrollAmount = container.clientWidth; // Scroll by one full viewport width
+        const isHorizontal = container.scrollWidth > container.clientWidth + 10;
+        const scrollAmount = isHorizontal ? container.clientWidth : container.clientHeight;
 
         switch (e.key) {
           case 'ArrowRight':
           case 'ArrowDown':
             // Scroll to next section
             e.preventDefault();
-            container.scrollLeft += scrollAmount;
+            if (isHorizontal) {
+              container.scrollLeft += scrollAmount;
+            } else {
+              container.scrollTop += scrollAmount;
+            }
             break;
           case 'ArrowLeft':
           case 'ArrowUp':
             // Scroll to previous section
             e.preventDefault();
-            container.scrollLeft -= scrollAmount;
+            if (isHorizontal) {
+              container.scrollLeft -= scrollAmount;
+            } else {
+              container.scrollTop -= scrollAmount;
+            }
             break;
         }
       };

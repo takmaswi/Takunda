@@ -35,11 +35,11 @@ export default function FoundationSection() {
         <div className="w-px h-16 bg-gradient-to-b from-transparent to-accent-cyan/50 mb-6 flex-shrink-0"></div>
 
         {/* Introduction Card */}
-        <div className="glass-card p-8 md:p-10 mb-4 w-full relative overflow-hidden group">
+        <div className="glass-card p-5 md:p-10 mb-4 w-full relative overflow-hidden group">
           {/* Subtle shine effect */}
           <div className="absolute inset-0 bg-gradient-to-tr from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
 
-          <h2 className="text-4xl md:text-5xl font-cinzel font-bold text-center mb-4 text-white tracking-widest drop-shadow-md">
+          <h2 className="text-3xl md:text-5xl font-cinzel font-bold text-center mb-4 text-white tracking-widest drop-shadow-md">
             FOUNDATION
           </h2>
           <div className="w-12 h-px bg-accent-cyan mx-auto mb-6"></div>
@@ -63,11 +63,11 @@ export default function FoundationSection() {
 
             <div className="grid grid-cols-2 gap-4 mt-8">
               <div className="p-4 text-center border border-white/5 rounded-lg bg-white/5 hover:bg-white/10 transition-colors duration-300">
-                <div className="text-3xl md:text-4xl font-cinzel font-bold text-white">{portfolioData.experience.years}+</div>
+                <div className="text-2xl md:text-4xl font-cinzel font-bold text-white">{portfolioData.experience.years}+</div>
                 <div className="text-xs md:text-sm text-accent-cyan mt-1 uppercase tracking-wider">Years Experience</div>
               </div>
               <div className="p-4 text-center border border-white/5 rounded-lg bg-white/5 hover:bg-white/10 transition-colors duration-300">
-                <div className="text-3xl md:text-4xl font-cinzel font-bold text-white">{portfolioData.experience.projectsCompleted}</div>
+                <div className="text-2xl md:text-4xl font-cinzel font-bold text-white">{portfolioData.experience.projectsCompleted}</div>
                 <div className="text-xs md:text-sm text-accent-cyan mt-1 uppercase tracking-wider">Projects</div>
               </div>
             </div>

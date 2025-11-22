@@ -7,6 +7,9 @@ export function useHorizontalScroll() {
         const el = elRef.current;
         if (el) {
             const onWheel = (e: WheelEvent) => {
+                // Check if we are on desktop (md breakpoint is usually 768px)
+                if (window.innerWidth < 768) return;
+
                 const isVertical = Math.abs(e.deltaY) > Math.abs(e.deltaX);
 
                 if (isVertical) {

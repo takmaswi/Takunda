@@ -42,7 +42,7 @@ export default function ServicesSection() {
         {/* Vertical Line Decoration */}
         <div className="w-px h-16 bg-gradient-to-b from-transparent to-accent-cyan/50 mb-6 flex-shrink-0"></div>
 
-        <h2 className="text-4xl md:text-5xl font-cinzel font-bold text-center mb-4 text-white tracking-widest drop-shadow-md">
+        <h2 className="text-3xl md:text-5xl font-cinzel font-bold text-center mb-4 text-white tracking-widest drop-shadow-md">
           SERVICES
         </h2>
         <div className="w-12 h-px bg-accent-cyan mx-auto mb-8"></div>
@@ -55,10 +55,10 @@ export default function ServicesSection() {
           {portfolioData.services.map((service, index) => (
             <div
               key={index}
-              className={`service-card glass-card glass-card-hover p-8 opacity-0 translate-y-10 group border border-white/5 hover:border-accent-cyan/30 transition-all duration-500 ${index === 4 ? 'md:col-span-2 lg:col-span-1' : ''
+              className={`service-card glass-card glass-card-hover p-6 md:p-8 opacity-0 translate-y-10 group border border-white/5 hover:border-accent-cyan/30 transition-all duration-500 ${index === 4 ? 'md:col-span-2 lg:col-span-1' : ''
                 }`}
             >
-              <div className="text-4xl mb-4 transform group-hover:scale-110 transition-transform duration-500 text-accent-cyan">
+              <div className="text-3xl md:text-4xl mb-4 transform group-hover:scale-110 transition-transform duration-500 text-accent-cyan">
                 {service.icon}
               </div>
 

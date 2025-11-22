@@ -108,7 +108,7 @@ export default function ContactSection() {
         {/* Vertical Line Decoration */}
         <div className="w-px h-16 bg-gradient-to-b from-transparent to-accent-cyan/50 mb-6 flex-shrink-0"></div>
 
-        <h2 className="text-4xl md:text-5xl font-cinzel font-bold text-center mb-4 text-white tracking-widest drop-shadow-md">
+        <h2 className="text-3xl md:text-5xl font-cinzel font-bold text-center mb-4 text-white tracking-widest drop-shadow-md">
           CONTACT
         </h2>
         <div className="w-12 h-px bg-accent-cyan mx-auto mb-8"></div>
@@ -119,7 +119,7 @@ export default function ContactSection() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
           {/* Profile Card */}
-          <div className="contact-animate glass-card p-8 opacity-0 translate-y-10 border border-white/5 relative overflow-hidden group">
+          <div className="contact-animate glass-card p-6 md:p-8 opacity-0 translate-y-10 border border-white/5 relative overflow-hidden group">
             {/* Subtle shine effect */}
             <div className="absolute inset-0 bg-gradient-to-tr from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
 
@@ -167,7 +167,7 @@ export default function ContactSection() {
           </div>
 
           {/* Contact Form */}
-          <div className="contact-animate glass-card p-8 opacity-0 translate-y-10 border border-white/5">
+          <div className="contact-animate glass-card p-6 md:p-8 opacity-0 translate-y-10 border border-white/5">
             <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label

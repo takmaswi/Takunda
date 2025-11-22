@@ -83,7 +83,7 @@ export default function PortfolioSection() {
             {filteredProjects.map((project, index) => (
               <div
                 key={index}
-                className="project-card glass-card glass-card-hover p-5 opacity-0 translate-y-10 group border border-white/5 hover:border-accent-cyan/30 transition-all duration-500"
+                className="project-card glass-card glass-card-hover p-4 md:p-5 opacity-0 translate-y-10 group border border-white/5 hover:border-accent-cyan/30 transition-all duration-500"
               >
                 <div className={`h-1 w-full bg-gradient-to-r ${project.color} mb-4 opacity-70 group-hover:opacity-100 transition-opacity duration-300`} />
 
